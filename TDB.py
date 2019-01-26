@@ -10,8 +10,8 @@ inventory = {"MIDA": False, "LDR": False}
 Thrall=5
 battleTwoEnemies = {"AcolyteOne": 2, "AcolyteTwo": 2, "Knight": 5}
 Ogre=15
-battleOne=5
-battleTwo=7
+battleOne=6
+battleTwo=4
 cover=False
 midaHit=0
 ldrHit=0
@@ -29,12 +29,13 @@ while partOne:
     print("-Check your Ghost-")
     print("-Approach the door-")
     inputOne=input("What will you do? >>> ").lower()
+            ##Equipment check
     if inputOne in ["check equipment", "equipment", "look equipment", "inspect equipment"]:
         print("You are armed with a MIDA Multi-Tool Scout Rifle and a LDR-5001 Sniper Rifle. Your Ghost is also with you. He can answer any questions you may have.")
-
+            ##Ghost check
     elif inputOne in ["check ghost", "ghost", "look ghost", "inspect ghost"]:
         print("Your ghost is... unsurprisingly chatty. He makes you aware of your current alignment: The Voidwalker. A Voidwalker Warlock can throw Axion Bolts, unique grenades that spawn two bolts which seek out hostiles. You can also create what's colloquially known as a 'Nova Bomb', a large ball of Void energy that explodes once thrown.")
-
+            ##Door check
     elif inputOne in ["approach door", "go to door", "door", "check door", "look door", "inspect door"]:
         print("You approach the door, the rune humming to you as you close in. You're not as versed on Hive magic as you should be, but your Ghost could possibly decipher the rune...")
         partOne=False
@@ -99,12 +100,12 @@ while partThree:
                 print("MIDA Multi-Tool equipped.")
                 inventory["MIDA"] = True
                 inventory["LDR"] = False
-                battleOne -= 1
+                battleOne-=1
             elif inputWeapon in ["ldr", "ldr-5001", "sniper rifle"]:
                 print("LDR-5001 equipped.")
                 inventory["MIDA"] = False
                 inventory["LDR"] = True
-                battleOne -= 1
+                battleOne-=1
             else:
                 print("No weapon equipped.")
 
@@ -116,7 +117,6 @@ while partThree:
                     if Thrall != 1:
                         print("Your Axion Bolt is flung in front of you, roughly in the direction of the incoming Thrall. 2 bolts spawn in the radius and seek out two of the Thrall. They erupt in a void explosion.")
                         Thrall -= 2
-                        print(Thrall)
                         battleOne -= 2
                         abilities["Axion Bolt"] -= 1
                         print(abilities)
@@ -174,8 +174,8 @@ while partThree:
 
     else:
         print("The Thrall close in and incapacitate you, leaving your corpse mauled and tattered after feasting on your light.")
-        print("THE DARKNESS CONSUMED YOU")
-        battleOne = 5
+        print("-THE DARKNESS CONSUMED YOU-")
+        battleOne = 6
         Thrall = 5
         abilities["Axion Bolt"] = 2
         abilities["Nova Bomb"] = 1
@@ -188,13 +188,37 @@ while partFour:
             print("You've cleared the wave of enemies. You make your way deeper into the tomb.")
             partFour=False
 
+    elif battleTwo == 0:
+        print("Your adverisaries overwhelm you, and your light fades.")
+        print("-THE DARKNESS CONSUMED YOU-")
+        battleTwo=3
+        cover=False
+        battleTwoEnemies["Knight"]=5
+        battleTwoEnemies["AcolyteOne"]=2
+        battleTwoEnemies["AcolyteTwo"]=2
+        abilities["Axion Bolt"] = 2
+        abilities["Nova Bomb"] = 1
+        continue
+
+
     elif battleTwo != 0:
         print("You can:")
         print("-Ready Weapon-")
+        print("-Fire Weapon-")
         print("-Use Void Ability-")
         print("-Talk to your Ghost-")
         print("-Take Cover-")
+        battleTwo-=1
         inputFour = input("What will you do? >>> ").lower()
+
+        if inputFour in ["ghost", "talk ghost", "talk to ghost", "inspect ghost", "examine ghost"]:
+            if cover==False:
+                print("Your Ghost quickly assesses the situation. It suggests you take cover to give you more time to plan a counter-attack.")
+                continue
+            else:
+                print("Your Ghost thinks taking down the Knight will be challenging, and suggests focusing your fire on it with a powerful weapon or ability.")
+                continue
+
 
             ##Ready Weapon tree
         if inputFour in ["ready weapon", "equip weapon", "ready"]:
@@ -203,12 +227,10 @@ while partFour:
                 print("MIDA Multi-Tool equipped.")
                 inventory["MIDA"] = True
                 inventory["LDR"] = False
-                battleTwo -= 1
             elif inputWeapon in ["ldr", "ldr-5001", "sniper rifle"]:
                 print("LDR-5001 equipped.")
                 inventory["MIDA"] = False
                 inventory["LDR"] = True
-                battleTwo -= 1
             else:
                 print("No weapon equipped.")
 
@@ -298,8 +320,85 @@ while partFour:
                         battleTwoEnemies["AcolyteTwo"]-=2
                         abilities["Nova Bomb"]-=1
                         continue
+
+                ##Fire Weapon tree
+        elif inputFour in ["fire weapon", "fire", "use weapon", "weapon"]:
+            if inventory["MIDA"] == True:
+                print("Enemies remaining: ")
+                if battleTwoEnemies["Knight"]>=1:
+                    print("Knight")
+                if battleTwoEnemies["AcolyteOne"]>=1:
+                    print("Acolyte One")
+                if battleTwoEnemies["AcolyteTwo"]>=1:
+                    print("Acolyte Two")
+                inputTarget=input("Who do you target? >>> ").lower()
+                if inputTarget in ["knight"]:
+                    midaHit=random.randint(1,3)
+                    battleTwoEnemies["Knight"]-=midaHit
+                    if battleTwoEnemies["Knight"]>=1:
+                        print("You batter the Knight with a barrage of shots from your MIDA, but it's still standing.")
+                        continue
+                    elif battleTwoEnemies["Knight"]<=0:
+                        print("You batter the Knight with a barrage of shots from your MIDA, and it collapses. You reload your clip.")
+                        continue
+                elif inputTarget in ["acolyte one", "acolyteone", "acolyte1", "acolyte 1", "one", "1", "thing 1"]:
+                    midaHit=random.randint(1,3)
+                    battleTwoEnemies["AcolyteOne"]-=midaHit
+                    if battleTwoEnemies["AcolyteOne"]>=1:
+                        print("You batter the Acolyte with a barrage of shots from your MIDA, but it's still standing.")
+                        continue
+                    elif battleTwoEnemies["AcolyteOne"]<=0:
+                        print("You batter the Acolyte with a barrage of shots from your MIDA, and it collapses. You reload your clip.")
+                        continue
+                elif inputTarget in ["acolyte two", "acolytetwo", "acolyte2", "acolyte 2", "two", "2", "thing 2"]:
+                    midaHit=random.randint(1,3)
+                    battleTwoEnemies["AcolyteTwo"]-=midaHit
+                    if battleTwoEnemies["AcolyteTwo"]>=1:
+                        print("You batter the Acolyte with a barrage of shots from your MIDA, but it's still standing.")
+                        continue
+                    elif battleTwoEnemies["AcolyteTwo"]<=0:
+                        print("You batter the Acolyte with a barrage of shots from your MIDA, and it collapses. You reload your clip.")
+                        continue
+                else:
+                    print("-Invalid action-")
+                    continue
+            elif inventory["LDR"] == True:
+                print("Enemies remaining: ")
+                if battleTwoEnemies["Knight"]>=1:
+                    print("Knight")
+                if battleTwoEnemies["AcolyteOne"]>=1:
+                    print("Acolyte One")
+                if battleTwoEnemies["AcolyteTwo"]>=1:
+                    print("Acolyte Two")
+                inputTarget=input("Who do you target? >>> ").lower()
+                if inputTarget in ["knight"]:
+                    if battleTwoEnemies["Knight"]>=4:
+                        battleTwoEnemies["Knight"]-=3
+                        print("You nail the Knight in the head with a clean shot, but it's still standing.")
+                        continue
+                    elif battleTwoEnemies["Knight"]<=3:
+                        battleTwoEnemies["Knight"]-=3
+                        print("You nail the Knight in the head with a clean shot, and it collapses in a pool of darkness.")
+                        continue
+                elif inputTarget in ["acolyte one", "acolyteone", "acolyte1", "acolyte 1", "one", "1", "thing 1"]:
+                    if battleTwoEnemies["AcolyteOne"]>=1:
+                        battleTwoEnemies["AcolyteOne"]-=2
+                        print("You scope in and hit the Acolyte, and it succumbs to its injury.")
+                        continue
+                elif inputTarget in ["acolyte two", "acolytetwo", "acolyte2", "acolyte 2", "two", "2", "thing 2"]:
+                    if battleTwoEnemies["AcolyteTwo"]>=1:
+                        battleTwoEnemies["AcolyteOne"]-=2
+                        print("You scope in and hit the Acolyte, and it succumbs to its injury.")
+                        continue
+
+                else:
+                    print("-Invalid action-")
+                    continue
             else:
-                print("-Invalid action, please try again-")
+                print("-You have no weapon equipped-")
+        else:
+            print("-Invalid action, please try again-")
+
 
 print("You arrive inside the tomb's Throne Room. There you see a locked chest, with four shapes portruding from it. It looks like they function as the keys to this chest, but you aren't certain.")
 print("-All abilites have been regenerated-")
