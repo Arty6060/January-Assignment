@@ -12,7 +12,13 @@ battleTwoEnemies = {"AcolyteOne": 2, "AcolyteTwo": 2, "Knight": 5}
 Ogre=15
 battleOne=6
 battleTwo=4
+battleThree=7
 cover=False
+chestCheck=False
+cThrall=False
+cAcolyte=False
+cKnight=False
+cOgre=False
 midaHit=0
 ldrHit=0
 import random
@@ -39,6 +45,13 @@ while partOne:
     elif inputOne in ["approach door", "go to door", "door", "check door", "look door", "inspect door"]:
         print("You approach the door, the rune humming to you as you close in. You're not as versed on Hive magic as you should be, but your Ghost could possibly decipher the rune...")
         partOne=False
+        ##Skips to Ogre encounter (Added for bugtesting)
+    if inputOne in ["big skip"]:
+        partOne=False
+        partTwo=False
+        partThree=False
+        partFour=False
+        partFive=False
 
     else:
         print("-Invalid action, please try again-")
@@ -93,6 +106,7 @@ while partThree:
 
 
         inputThree=input("What will you do? >>> ").lower()
+
                 ##Ready Weapon tree
         if inputThree in ["ready weapon", "equip weapon", "ready"]:
             inputWeapon=input("Which weapon do you equip? >>> ").lower()
@@ -172,6 +186,7 @@ while partThree:
         else:
             print("-Invalid action, please try again-")
 
+            ##Fail state
     else:
         print("The Thrall close in and incapacitate you, leaving your corpse mauled and tattered after feasting on your light.")
         print("-THE DARKNESS CONSUMED YOU-")
@@ -184,10 +199,13 @@ while partThree:
 print("You move slowly through the tomb, past the chamber. All of a sudden you see two blaster shots from opposite directions coming towards you. You dodge out of the way, and get a glimpse at your foes. Two Hive Acolytes and a Knight.")
 ##Part Four (Acolyte battle)
 while partFour:
+
+            ##Win State
     if battleTwoEnemies["Knight"]<=0 and battleTwoEnemies["AcolyteOne"]<=0 and battleTwoEnemies["AcolyteTwo"]<=0:
             print("You've cleared the wave of enemies. You make your way deeper into the tomb.")
             partFour=False
 
+            ##Fail State
     elif battleTwo == 0:
         print("Your adverisaries overwhelm you, and your light fades.")
         print("-THE DARKNESS CONSUMED YOU-")
@@ -200,7 +218,7 @@ while partFour:
         abilities["Nova Bomb"] = 1
         continue
 
-
+            ##Battle check
     elif battleTwo != 0:
         print("You can:")
         print("-Ready Weapon-")
@@ -211,6 +229,7 @@ while partFour:
         battleTwo-=1
         inputFour = input("What will you do? >>> ").lower()
 
+            ##Ghost tree
         if inputFour in ["ghost", "talk ghost", "talk to ghost", "inspect ghost", "examine ghost"]:
             if cover==False:
                 print("Your Ghost quickly assesses the situation. It suggests you take cover to give you more time to plan a counter-attack.")
@@ -320,6 +339,9 @@ while partFour:
                         battleTwoEnemies["AcolyteTwo"]-=2
                         abilities["Nova Bomb"]-=1
                         continue
+            else:
+                print("You cannot use that ability")
+                continue
 
                 ##Fire Weapon tree
         elif inputFour in ["fire weapon", "fire", "use weapon", "weapon"]:
@@ -400,8 +422,199 @@ while partFour:
             print("-Invalid action, please try again-")
 
 
-print("You arrive inside the tomb's Throne Room. There you see a locked chest, with four shapes portruding from it. It looks like they function as the keys to this chest, but you aren't certain.")
-print("-All abilites have been regenerated-")
+print("You arrive inside the tomb's Throne Room. There you see a locked chest, with four shapes portruding from it. It looks like they pushed inward.")
+print("-All abilities have been regenerated-")
 abilities["Axion Bolt"]=2
 abilities["Nova Bomb"]=1
+cover=False
 print(abilities)
+
+while partFive:
+        ##Win state
+    if cOgre==True:
+        print("With the mechanism complete, you hear the cogs inside the chest turn and unravel the treasure inside. The cogs lock with a loud clang. You hear something behind you...")
+        partFive=False
+        continue
+
+    print("You can:")
+    print("-Talk to your Ghost-")
+    print("-Look at Shapes-")
+    print("-Ready Weapon-")
+    print("-Interact with the Shapes-")
+    inputFive=input("What will you do? >>> ").lower()
+            ##Ghost tree
+    if inputFive in ["ghost", "talk ghost", "talk to ghost", "inspect ghost", "examine ghost"]:
+        if chestCheck==False:
+            print("You're too far away from the chest for your Ghost to take a proper look.")
+        elif chestCheck==True:
+            print("Your Ghost inspects the mechanism in place, and notes the symbols on it: There's a Knight, an Acolyte, a Thrall, and another symbol neither of you have seen before. You dub it as 'unknown'.")
+            ##Weapon Ready
+    if inputFive in ["ready weapon", "equip weapon", "ready"]:
+        inputWeapon=input("Which weapon do you equip? >>> ").lower()
+        if inputWeapon in ["mida", "multi-tool", "mida multi-tool", "scout rifle"]:
+            print("MIDA Multi-Tool equipped.")
+            inventory["MIDA"] = True
+            inventory["LDR"] = False
+            continue
+        elif inputWeapon in ["ldr", "ldr-5001", "sniper rifle"]:
+            print("LDR-5001 equipped.")
+            inventory["MIDA"] = False
+            inventory["LDR"] = True
+            continue
+        else:
+            print("No weapon equipped.")
+            continue
+            ##Chest tree
+    if inputFive in ["Look to shapes", "Look at shapes", "go to shapes"]:
+        if chestCheck==False:
+            print("You move closer to the chest, and can see the four shapes slightly more clearly now. You might need your Ghost to light them up however.")
+            chestCheck=True
+        elif chestCheck==True:
+            print("You're already close to the shapes.")
+            ##Shapes tree
+    if inputFive in ["inspect shapes", "interact shapes", "shapes", "interact with shapes", "examine shapes"]:
+        inputShapes=input("Which shape will you press? >>> ").lower()
+        if inputShapes in ["thrall"]:
+            print("The shape locks in place, and hums softly. Three shapes remain.")
+            cThrall=True
+        elif inputShapes in ["acolyte"] and cThrall==True:
+            print("The shape locks in place, and hums softly. Two shapes remain.")
+            cAcolyte=True
+        elif inputShapes in ["knight"] and cThrall==True and cAcolyte==True:
+            print("The shape locks in place, and hums softly. One shape remains.")
+            cKnight=True
+        elif inputShapes in ["unknown", "mysterious symbol", "symbol", "ogre"] and cThrall==True and cAcolyte==True and cKnight==True:
+            print("The shape locks in place, and hums softly. The mechanism is complete")
+            cOgre=True
+        else:
+            print("-Incorrect shape, the mechanism resets-")
+            cThrall=False
+            cAcolyte=False
+            cKnight=False
+            cOgre=False
+            continue
+
+print("You turn and see large claws grabbing through the floor. A large behemoth drags itself from the grubby crypt it laid in and stands in front of you, slouched and gruesome. Your Ghost know what that symbol was now: A Hive Ogre.")
+
+while partSix:
+
+        ##Win state
+    if Ogre <= 0:
+        print("With the Ogre now defeated, you look back to the chest and find your prize... a Hive relic you have no understanding of. You hope Eris had a good reason to drag you out here for... This. You raise your Ghost, and prepare for extraction.")
+        partSix=False
+
+        ##Fail state
+    if battleThree==0:
+        print("The Ogre decimates you with its laser sight, turning your light to nothing.")
+        print("-THE DARKNESS HAS CONSUMED YOU-")
+        Ogre=15
+        battleThree=6
+        abilities["Nova Bomb"]=1
+        abilities["Axion Bolt"]=2
+        continue
+
+        ##Encounter check
+    if Ogre >= 1:
+        print("You can:")
+        print("-Ready Weapon-")
+        print("-Fire Weapon-")
+        print("-Use Void Ability-")
+        print("-Talk to your Ghost-")
+        print("-Take Cover-")
+        battleThree-=1
+        inputSix=input("What will you do? >>> ")
+
+                ##Ready weapon tree
+        if inputSix in ["ready weapon", "equip weapon", "ready"]:
+            inputWeapon=input("Which weapon do you equip? >>> ").lower()
+            if inputWeapon in ["mida", "multi-tool", "mida multi-tool", "scout rifle"]:
+                print("MIDA Multi-Tool equipped.")
+                inventory["MIDA"] = True
+                inventory["LDR"] = False
+            elif inputWeapon in ["ldr", "ldr-5001", "sniper rifle"]:
+                print("LDR-5001 equipped.")
+                inventory["MIDA"] = False
+                inventory["LDR"] = True
+            else:
+                print("No weapon equipped.")
+
+                ##Ghost tree
+        if inputSix in ["ghost", "talk ghost", "talk to ghost", "inspect ghost", "examine ghost"]:
+            print("Your Ghost is dumbfounded, but has a plan. He suggests sniping from a distance and then using an ability to finish it off.")
+
+                ##Cover Three
+        if inputSix in ["cover", "take cover", "get into cover", "go to cover"]:
+                if cover==False:
+                    print("You see a raised mound of melded corpses to your left. You sprint towards it, sliding into firing position.")
+                    battleThree += 2
+                    cover=True
+                    continue
+                else:
+                    print("You're already in cover.")
+                    continue
+
+                    ##Void tree
+        elif inputSix in ["use void", "void", "use void ability", "use ability"]:
+            inputVoid=input("Which ability do you use? >>> ").lower()
+            if inputVoid in ["axion bolt", "bolt", "grenade"]:
+                if abilities["Axion Bolt"]!=0:
+                    Ogre -= 3
+                    abilities["Axion Bolt"] -= 1
+                    if Ogre >= 1:
+                        print("The Ogre is blasted by your Axion Bolt, but remains standing.")
+                        print(abilities)
+                        continue
+                    elif Ogre <= 0:
+                        print("The Ogre is blasted by your Axion Bolt, and becomes still. The void energy erases its physical matter from toe to head as it falls on its knees. The creature's dead.")
+                        continue
+                elif abilities["Axion Bolt"]==0:
+                    print("Your Axion Bolt charges are depleted")
+            elif inputVoid in ["nova bomb", "nova", "bomb", "void bomb", "one round purple boi"]:
+                Ogre -= 9
+                abilities["Nova Bomb"] -= 1
+                if Ogre >= 1:
+                    print("With your arms raised to your chest as you hover, you unleash a devastating Nova Bomb. The Ogre flinches at the explosion, looking wounded but still ferocious.")
+                    print(abilities)
+                    continue
+                elif Ogre <= 0:
+                    print("You raise a Nova Bomb to the sky from your fingertips, and slam it down onto the wounded Ogre. It implodes upon contact, and the explosion echoes throughout the Tomb's chambers. The abomination has been eliminated.")
+                    continue
+            else:
+                print("-Invalid action, please try again-")
+
+                    ##Fire tree
+        if inputSix in ["fire weapon", "fire", "use weapon", "weapon"]:
+            if inventory["MIDA"] == True:
+                midaHit = random.randint(2, 3)
+                Ogre -= midaHit
+                if Ogre >= 1:
+                    print("You fire off a burst of shots, pelting the Ogre. It barely flinches.")
+                    continue
+                elif Ogre <= 0:
+                    print("The Ogre is struck in the eye with the remaining rounds in your clip, and collapses. Exhausted and wounded, it succumbs to your light.")
+                    continue
+            elif inventory["LDR"] == True:
+                ldrHit = random.randint(1,2)
+                if ldrHit==1:
+                    Ogre-=1
+                    if Ogre >= 1:
+                        print("You hit the Ogre, but the hit doesn't look critical. It shrugs off the damage.")
+                        continue
+                    elif Ogre <= 0:
+                        print("You hit the Ogre, and it recoils. Suddenly, it collapses to the floor, deceased.")
+                        continue
+                elif ldrHit==2:
+                    Ogre-=5
+                    if Ogre >= 1:
+                        print("You nail the Ogre in the eye, forcing it to stumble in place. Its pained growl resonates across the Tomb.")
+                        continue
+                    elif Ogre <= 0:
+                        print("You nail the Ogre in the eye, and with a loud screech, it falls backwards, disintegrating. The beast is dead.")
+                        continue
+
+            else:
+                print("-You have no weapon equipped-")
+
+
+print("-Mission Complete-")
+print("-This concludes the Text Adventure, thanks for playing!-")
